@@ -6,9 +6,13 @@ from app.expenses import ExpenseManager
 from datetime import datetime, timedelta
 import pandas as pd
 from io import BytesIO
+from app.init_db import init_db
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 app.secret_key = os.environ.get('SECRET_KEY')
+
+# Initialize database
+init_db()
 
 # Initialize managers
 inventory_manager = InventoryManager()
