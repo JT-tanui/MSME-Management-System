@@ -3,6 +3,10 @@
 ### **Overview**
 The **MSME (Micro, Small, and Medium Enterprises) Management System** is a comprehensive web application designed to streamline the operations of small businesses. Built with **Flask** and integrated with tools for inventory, sales, expense, and financial reporting, the platform provides an all-in-one solution for managing day-to-day business operations.
 
+Link: https://msme-management-system.onrender.com/
+
+Test: https://msme-management-system.onrender.com/test-config
+
 ---
 
 ## **Features**
@@ -208,9 +212,9 @@ Contributions are welcome! To contribute:
 
 ## **Contact**
 For questions or collaboration:
-- **Name**: Your Name
-- **Email**: your.email@example.com
-- **GitHub**: [Your GitHub Profile](https://github.com/your-username)
+- **Name**: Job Kiprotich Busienei
+- **Email**: tanuijobs11@gmail.com
+- **GitHub**: [My github profile](https://github.com/https://github.com/JT-tanui/)
 
 ---
 
