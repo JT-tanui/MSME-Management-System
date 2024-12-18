@@ -1,0 +1,145 @@
+.navbar {
+    margin-bottom: 2rem;
+}
+
+.card {
+    margin-bottom: 1rem;
+}
+
+.alert {
+    margin-top: 1rem;
+}
+
+.table-responsive {
+    margin-top: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.btn-action {
+    margin-right: 0.5rem;
+}
+
+.summary-card {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.low-stock-alert {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Dashboard specific styles */
+.dashboard-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.dashboard-card .card-body {
+    padding: 1.5rem;
+}
+
+.dashboard-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eee;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 0;
+    color: #2c3e50;
+}
+
+.stat-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.quick-actions {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+.quick-actions .btn {
+    padding: 0.8rem 1.5rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.quick-actions .btn-success {
+    background-color: #2ecc71;
+    border-color: #27ae60;
+}
+
+.quick-actions .btn-info {
+    background-color: #3498db;
+    border-color: #2980b9;
+}
+
+.quick-actions .btn-warning {
+    background-color: #f1c40f;
+    border-color: #f39c12;
+}
+
+.quick-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card specific colors */
+.inventory-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-left: 4px solid #2ecc71;
+}
+
+.sales-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-left: 4px solid #3498db;
+}
+
+.expenses-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-left: 4px solid #e74c3c;
+}
+
+/* Stats styling */
+.stats-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-secondary {
+    text-align: right;
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.stat-secondary .value {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.stat-secondary .label {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+}

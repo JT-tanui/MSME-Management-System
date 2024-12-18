@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Sales Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="dashboard-title">Sales Management</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newSaleModal">
+            <i class="fas fa-plus-circle me-2"></i>Record New Sale
+        </button>
+    </div>
+</div>
+
+<!-- Sales Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card dashboard-card sales-card">
+            <div class="card-body">
+                <h5 class="card-title">Today's Sales</h5>
+                <h2 class="stat-value">${{ today_sales|default(0, true)|round(2) }}</h2>
+                <p class="stat-label">{{ today_transactions|default(0) }} Transactions</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h5 class="card-title">This Week</h5>
+                <h2 class="stat-value">${{ weekly_sales|default(0, true)|round(2) }}</h2>
+                <p class="stat-label">{{ weekly_transactions|default(0) }} Transactions</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h5 class="card-title">This Month</h5>
+                <h2 class="stat-value">${{ monthly_sales|default(0, true)|round(2) }}</h2>
+                <p class="stat-label">{{ monthly_transactions|default(0) }} Transactions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sales Table -->
+<div class="card dashboard-card">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Recent Sales</h5>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total Amount</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.id }}</td>
+                        <td>{{ sale.product_name }}</td>
+                        <td>{{ sale.quantity_sold }}</td>
+                        <td>${{ sale.unit_price }}</td>
+                        <td>${{ sale.total_amount }}</td>
+                        <td>{{ sale.sale_date }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#viewSaleModal{{ sale.id }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- View Sale Modal -->
+                    <div class="modal fade" id="viewSaleModal{{ sale.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Sale Details</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <strong>Product:</strong> {{ sale.product_name }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Quantity Sold:</strong> {{ sale.quantity_sold }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Unit Price:</strong> ${{ sale.unit_price }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Total Amount:</strong> ${{ sale.total_amount }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Sale Date:</strong> {{ sale.sale_date }}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- New Sale Modal -->
+<div class="modal fade" id="newSaleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record New Sale</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('add_sale') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Product</label>
+                        <select class="form-select" name="product_id" required>
+                            <option value="">Select Product</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}" 
+                                    data-price="{{ product.unit_price }}"
+                                    data-stock="{{ product.quantity }}">
+                                {{ product.product_name }} (Stock: {{ product.quantity }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" 
+                               class="form-control" 
+                               name="quantity" 
+                               min="1" 
+                               required>
+                        <small class="text-muted">Available stock: <span id="available-stock">-</span></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Unit Price ($)</label>
+                        <input type="number" 
+                               class="form-control" 
+                               name="unit_price" 
+                               step="0.01" 
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Total Amount</label>
+                        <div class="form-control bg-light" id="total-amount">$0.00</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Record Sale</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productSelect = document.querySelector('select[name="product_id"]');
+    const quantityInput = document.querySelector('input[name="quantity"]');
+    const priceInput = document.querySelector('input[name="unit_price"]');
+    const totalAmount = document.getElementById('total-amount');
+    const stockDisplay = document.getElementById('available-stock');
+
+    function updateTotal() {
+        const quantity = parseFloat(quantityInput.value) || 0;
+        const price = parseFloat(priceInput.value) || 0;
+        totalAmount.textContent = `$${(quantity * price).toFixed(2)}`;
+    }
+
+    function updateStockInfo() {
+        const selectedOption = productSelect.selectedOptions[0];
+        if (selectedOption.value) {
+            const stock = selectedOption.dataset.stock;
+            const price = selectedOption.dataset.price;
+            stockDisplay.textContent = stock;
+            priceInput.value = price;
+            quantityInput.max = stock;
+        } else {
+            stockDisplay.textContent = '-';
+            priceInput.value = '';
+        }
+        updateTotal();
+    }
+
+    productSelect.addEventListener('change', updateStockInfo);
+    quantityInput.addEventListener('input', updateTotal);
+    priceInput.addEventListener('input', updateTotal);
+});
+</script>
+{% endblock %}

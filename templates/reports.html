@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Reports & Analytics{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="dashboard-title">Reports & Analytics</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <div class="btn-group">
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-file-excel me-2"></i>Export Data
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('export_report', report_type='inventory') }}">
+                            Export Inventory
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('export_report', report_type='sales') }}?{{ request.query_string.decode() }}">
+                            Export Sales
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('export_report', report_type='expenses') }}?{{ request.query_string.decode() }}">
+                            Export Expenses
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="fas fa-print me-2"></i>Print Report
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Date Range Filter -->
+<div class="card dashboard-card mb-4">
+    <div class="card-body">
+        <form id="dateRangeForm" method="GET" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">From</label>
+                <input type="date" 
+                       class="form-control" 
+                       name="start_date"
+                       value="{{ request.args.get('start_date', '') }}">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">To</label>
+                <input type="date" 
+                       class="form-control" 
+                       name="end_date"
+                       value="{{ request.args.get('end_date', '') }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-2"></i>Search
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Financial Summary -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Financial Summary</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="summary-item">
+                            <span class="label">Total Sales</span>
+                            <h3 class="value text-primary">${{ total_sales|default(0, true)|round(2) }}</h3>
+                            <small>{{ transaction_count }} transactions</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-item">
+                            <span class="label">Total Expenses</span>
+                            <h3 class="value text-danger">${{ total_expenses|default(0, true)|round(2) }}</h3>
+                            <small>{{ expense_count }} transactions</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-item">
+                            <span class="label">Net Profit</span>
+                            <h3 class="value {{ 'text-success' if net_profit > 0 else 'text-danger' }}">
+                                ${{ net_profit|default(0, true)|round(2) }}
+                            </h3>
+                            <small>{{ (net_profit_percentage|default(0))|round(1) }}% margin</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h5 class="card-title">Sales Overview</h5>
+                <canvas id="salesChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card dashboard-card">
+            <div class="card-body">
+                <h5 class="card-title">Expense Breakdown</h5>
+                <canvas id="expenseChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Products -->
+<div class="card dashboard-card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Best Selling Products</h5>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th class="text-center">Units Sold</th>
+                        <th class="text-end">Revenue</th>
+                        <th class="text-center">Stock Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in top_products %}
+                    <tr>
+                        <td>{{ product.product_name }}</td>
+                        <td class="text-center">{{ product.units_sold }}</td>
+                        <td class="text-end">${{ product.revenue|round(2) }}</td>
+                        <td class="text-center">
+                            <span class="badge bg-{{ 'danger' if product.current_stock <= product.reorder_level else 'success' }}">
+                                {{ product.current_stock }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sales Chart
+    new Chart(document.getElementById('salesChart'), {
+        type: 'line',
+        data: {
+            labels: JSON.parse('{{ sales_dates|tojson|safe }}'),
+            datasets: [{
+                label: 'Daily Sales',
+                data: JSON.parse('{{ sales_amounts|tojson|safe }}'),
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Expense Chart
+    new Chart(document.getElementById('expenseChart'), {
+        type: 'doughnut',
+        data: {
+            labels: JSON.parse('{{ expense_categories|tojson|safe }}'),
+            datasets: [{
+                data: JSON.parse('{{ expense_amounts|tojson|safe }}'),
+                backgroundColor: [
+                    '#2ecc71', '#3498db', '#9b59b6', '#f1c40f',
+                    '#e74c3c', '#1abc9c', '#34495e', '#95a5a6'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
+
+<style>
+@media print {
+    .btn-group, form, .navbar {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .dashboard-title {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+}
+
+.summary-item {
+    text-align: center;
+    padding: 1rem;
+}
+
+.summary-item .label {
+    display: block;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.summary-item .value {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.summary-item small {
+    color: #666;
+}
+</style>
+{% endblock %}
