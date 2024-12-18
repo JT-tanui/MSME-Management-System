@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Configuration Test{% endblock %}
+
+{% block content %}
+<div class="card dashboard-card">
+    <div class="card-body">
+        <h5 class="card-title">Environment Variables</h5>
+        <ul class="list-group mb-4">
+            {% for key, value in config.items() %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ key }}
+                <span class="badge {% if value == 'Not Set' %}bg-danger{% else %}bg-success{% endif %}">
+                    {{ value }}
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <h5 class="card-title">Database Status</h5>
+        <div class="alert {% if db_status == 'Connected' %}alert-success{% else %}alert-danger{% endif %}">
+            Database: {{ db_status }}
+        </div>
+
+        {% if db_status != 'Connected' %}
+        <div class="alert alert-warning">
+            <h6>Troubleshooting Steps:</h6>
+            <ol>
+                <li>Check if database file exists in instance folder</li>
+                <li>Verify DATABASE_URL environment variable</li>
+                <li>Check file permissions</li>
+                <li>Try reinitializing the database</li>
+            </ol>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

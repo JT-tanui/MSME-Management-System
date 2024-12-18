@@ -292,5 +292,27 @@ def export_report(report_type):
         download_name=filename
     )
 
+@app.route('/test-config')
+def test_config():
+    """Test configuration and database connection"""
+    try:
+        # Test environment variables
+        config_status = {
+            'FLASK_APP': os.environ.get('FLASK_APP', 'Not Set'),
+            'FLASK_ENV': os.environ.get('FLASK_ENV', 'Not Set'),
+            'SECRET_KEY': 'Set' if os.environ.get('SECRET_KEY') else 'Not Set',
+            'DATABASE_URL': os.environ.get('DATABASE_URL', 'Not Set')
+        }
+        
+        # Test database connection
+        inventory = inventory_manager.get_inventory()
+        db_status = "Connected" if inventory is not None else "Failed"
+        
+        return render_template('test_config.html', 
+                             config=config_status,
+                             db_status=db_status)
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
 if __name__ == '__main__':
     app.run(debug=True)
