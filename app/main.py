@@ -7,12 +7,15 @@ from datetime import datetime, timedelta
 import pandas as pd
 from io import BytesIO
 from app.init_db import init_db
+from app.db import close_db
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 app.secret_key = os.environ.get('SECRET_KEY')
+app.teardown_appcontext(close_db)
 
-# Initialize database
-init_db()
+# Initialize database within app context
+with app.app_context():
+    init_db()
 
 # Initialize managers
 inventory_manager = InventoryManager()
