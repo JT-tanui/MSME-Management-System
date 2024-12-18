@@ -7,5 +7,9 @@ services:
     envVars:
       - key: FLASK_APP
         value: wsgi.py
-      - key: PYTHON_VERSION
-        value: 3.12.0
+      - key: FLASK_ENV
+        value: production
+      - key: DATABASE_URL
+        value: sqlite:///instance/msme.db
+      - key: SECRET_KEY
+        sync: false  # This means you'll set it manually in Render dashboard

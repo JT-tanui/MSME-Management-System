@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
+import os
 from app.inventory import InventoryManager
 from app.sales import SalesManager
 from app.expenses import ExpenseManager
@@ -7,7 +8,7 @@ import pandas as pd
 from io import BytesIO
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
-app.secret_key = 'your-secret-key-here'  # Required for flash messages
+app.secret_key = os.environ.get('SECRET_KEY')
 
 # Initialize managers
 inventory_manager = InventoryManager()
