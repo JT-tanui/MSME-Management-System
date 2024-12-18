@@ -57,13 +57,6 @@ Test: https://msme-management-system.onrender.com/test-config
 - **Data Processing**: Pandas
 - **File Handling**: Excel export with openpyxl
 
-### **Frontend**
-- **Framework**: Bootstrap 5
-- **Charts**: Chart.js
-- **Icons**: Font Awesome
-- **JavaScript**: Vanilla JS
-- **Templates**: Jinja2
-
 ---
 
 ## **Project Structure**
@@ -167,7 +160,7 @@ python run.py
 |---------------------|------------------------|
 | **Backend**        | Flask, Python          |
 | **Database**       | SQLite                |
-| **Frontend**       | Bootstrap, Chart.js    |
+| **Frontend**       | Bootstrap   |
 | **Data Handling**  | Pandas, openpyxl       |
 | **Deployment**     | Render                 |
 | **Icons & Styling**| Font Awesome, CSS      |
@@ -188,10 +181,6 @@ Install all dependencies with:
 pip install -r requirements.txt
 ```
 
----
-
-## **Screenshots**
-Add screenshots of the dashboard, inventory, and reports here to showcase the system.
 
 ---
 
